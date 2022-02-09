@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useQuery } from "react-query";
 import { Drawer } from "@material-ui/core";
 import { Grid } from "@material-ui/core";
@@ -8,7 +8,7 @@ import { AddShoppingCart } from "@material-ui/icons";
 import { StyledButton, Wrapper } from "./App.styles";
 import Item from "./components/Item/Item";
 import Cart from "./components/cart/Cart";
-
+import axios from "axios";
 export type CartItemType = {
   id: number;
   category: string;
@@ -20,11 +20,20 @@ export type CartItemType = {
 };
 
 function App() {
+  const [pokemon, setPokemon] = useState();
   const [cartOpen, setCartOpen] = useState(false);
   const [cartItems, setCartItems] = useState([] as CartItemType[]);
   const getItem = async (): Promise<CartItemType[]> => {
     return await (await fetch("https://fakestoreapi.com/products")).json();
   };
+
+  useEffect(() => {
+    const getPoke = async () => {
+      const { data } = await axios.get("https://pokeapi.co/api/v2/pokemon/22");
+      setPokemon(data);
+    };
+    getPoke();
+  }, []);
 
   const { data, isLoading, error } = useQuery<CartItemType[]>(
     "products",
